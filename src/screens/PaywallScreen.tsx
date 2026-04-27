@@ -5,14 +5,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
+import { useUserStore } from '@/store/userStore';
 import { colors, spacing, typography } from '@/theme';
 
 type PaywallNavProp = NativeStackNavigationProp<RootStackParamList, 'Paywall'>;
+type PaywallRouteProp = RouteProp<RootStackParamList, 'Paywall'>;
 
 type BillingCycle = 'monthly' | 'annual';
 type TierKey = 'clean' | 'polished' | 'auto';
@@ -69,17 +70,27 @@ const TIERS: TierConfig[] = [
 
 const PaywallScreen: React.FC = () => {
   const navigation = useNavigation<PaywallNavProp>();
+  const route = useRoute<PaywallRouteProp>();
+  const setTier = useUserStore((s) => s.setTier);
+  const setUser = useUserStore((s) => s.setUser);
+
   const [billing, setBilling] = useState<BillingCycle>('monthly');
   const [selectedTier, setSelectedTier] = useState<TierKey>('polished');
 
   const handleStartTrial = () => {
-    console.log('Start trial stub — tier:', selectedTier, 'billing:', billing);
-    Alert.alert('Payment coming soon', 'In-app purchases will be available in a future update.');
+    // DEMO: instantly apply the selected tier — no real payment
+    setTier(selectedTier);
+    const trialEnds = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    setUser({ trial_ends_at: trialEnds });
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.replace('Home');
+    }
   };
 
   const handleRestorePurchases = () => {
-    console.log('Restore purchases stub');
-    Alert.alert('Restore purchases', 'Restore functionality coming soon.');
+    // DEMO: no-op
   };
 
   return (
@@ -187,9 +198,10 @@ const PaywallScreen: React.FC = () => {
         >
           <Text style={styles.ctaButtonText}>Start 7-day free trial</Text>
         </TouchableOpacity>
-        <Text style={styles.ctaSubtext}>
-          Cancel anytime. No charge during trial.
-        </Text>
+        <Text style={styles.ctaSubtext}>Cancel anytime. No charge during trial.</Text>
+        <View style={styles.demoBadge}>
+          <Text style={styles.demoBadgeText}>DEMO MODE — no real payment is processed</Text>
+        </View>
 
         {/* Restore */}
         <TouchableOpacity
@@ -389,6 +401,22 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 14,
     textDecorationLine: 'underline',
+  },
+  demoBadge: {
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    alignSelf: 'center',
+    marginTop: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  demoBadgeText: {
+    fontSize: 11,
+    color: colors.textMuted,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
 });
 
