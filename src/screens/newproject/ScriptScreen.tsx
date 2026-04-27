@@ -180,7 +180,7 @@ const ScriptScreen: React.FC = () => {
         .insert(sentenceRows);
       if (sentenceError) throw sentenceError;
 
-      navigation.navigate('Record', { projectId: projectId! });
+      navigation.navigate('Record', { projectId: projectId!, takesPerSentence: takes });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Could not save project.';
       Alert.alert('Error', message);

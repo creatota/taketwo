@@ -13,7 +13,12 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.taketwo.app"
+      "bundleIdentifier": "com.taketwo.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "TakeTwo uses the camera to record your video takes.",
+        "NSMicrophoneUsageDescription": "TakeTwo uses the microphone to record your audio.",
+        "NSSpeechRecognitionUsageDescription": "TakeTwo transcribes your takes to detect filler words."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +28,9 @@
       "package": "com.taketwo.app"
     },
     "plugins": [
-      "expo-av"
+      "expo-camera",
+      "expo-file-system",
+      ["expo-av", { "microphonePermission": "TakeTwo needs the microphone to record your script." }]
     ]
   }
 }
