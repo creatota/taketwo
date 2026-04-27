@@ -30,7 +30,11 @@
     "plugins": [
       "expo-camera",
       "expo-file-system",
-      ["expo-av", { "microphonePermission": "TakeTwo needs the microphone to record your script." }]
+      ["expo-av", { "microphonePermission": "TakeTwo needs the microphone to record your script." }],
+      ["expo-media-library", {
+        "photosPermission": "TakeTwo saves your exported videos to your photo library.",
+        "savePhotosPermission": "TakeTwo saves your exported videos to your photo library."
+      }]
     ]
   }
 }
