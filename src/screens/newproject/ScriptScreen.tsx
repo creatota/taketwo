@@ -15,8 +15,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
-import supabase from '@/lib/supabase';
-import { useUserStore } from '@/store/userStore';
+import { useDemoStore } from '@/store/demoStore';
 import { colors, spacing, typography } from '@/theme';
 
 type ScriptNavProp = NativeStackNavigationProp<RootStackParamList, 'Script'>;
@@ -47,43 +46,19 @@ const ScriptScreen: React.FC = () => {
   const userId = useUserStore((s) => s.id);
 
   const existingProjectId = route.params?.projectId;
+  const setProject = useDemoStore((s) => s.setProject);
 
   const [title, setTitle] = useState('');
   const [script, setScript] = useState('');
   const [takes, setTakes] = useState<2 | 3 | 4>(3);
   const [sentences, setSentences] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(!!existingProjectId);
+  const [loading] = useState(false);
 
   // AI modal state
   const [aiModalVisible, setAiModalVisible] = useState(false);
   const [aiTopic, setAiTopic] = useState('');
   const [aiTone, setAiTone] = useState('');
-
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Load existing project if editing
-  useEffect(() => {
-    if (!existingProjectId) return;
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('projects')
-          .select('title, script_text')
-          .eq('id', existingProjectId)
-          .single();
-        if (error) throw error;
-        if (data) {
-          setTitle(data.title);
-          setScript(data.script_text);
-        }
-      } catch {
-        Alert.alert('Error', 'Could not load project.');
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [existingProjectId]);
 
   // Debounced sentence splitting
   useEffect(() => {
@@ -134,56 +109,9 @@ const ScriptScreen: React.FC = () => {
 
     setSaving(true);
     try {
-      let projectId = existingProjectId;
-
-      if (projectId) {
-        // Update existing project
-        const { error } = await supabase
-          .from('projects')
-          .update({
-            title: title.trim(),
-            script_text: script.trim(),
-            status: 'recording',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', projectId);
-        if (error) throw error;
-
-        // Delete old sentences and re-insert
-        await supabase.from('sentences').delete().eq('project_id', projectId);
-      } else {
-        // Create new project
-        const { data, error } = await supabase
-          .from('projects')
-          .insert({
-            user_id: userId,
-            title: title.trim(),
-            script_text: script.trim(),
-            status: 'recording',
-          })
-          .select('id')
-          .single();
-        if (error) throw error;
-        projectId = data.id;
-      }
-
-      // Insert sentences
-      const sentenceRows = sentences.map((text, i) => ({
-        project_id: projectId,
-        order_index: i,
-        text,
-        selected_take_id: null,
-      }));
-
-      const { error: sentenceError } = await supabase
-        .from('sentences')
-        .insert(sentenceRows);
-      if (sentenceError) throw sentenceError;
-
-      navigation.navigate('Record', { projectId: projectId!, takesPerSentence: takes });
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Could not save project.';
-      Alert.alert('Error', message);
+      const projectId = existingProjectId ?? `demo-${Date.now()}`;
+      setProject(projectId, title.trim(), sentences);
+      navigation.navigate('Record', { projectId, takesPerSentence: takes });
     } finally {
       setSaving(false);
     }

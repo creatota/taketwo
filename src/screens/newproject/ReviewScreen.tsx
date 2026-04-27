@@ -14,9 +14,9 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
-import { Sentence, Take } from '@/types/database';
-import supabase from '@/lib/supabase';
+import { Take } from '@/types/database';
 import { useUserStore } from '@/store/userStore';
+import { useDemoStore } from '@/store/demoStore';
 import { stitchTakes } from '@/utils/videoStitch';
 import { colors, spacing, typography } from '@/theme';
 
@@ -61,6 +61,11 @@ const ReviewScreen: React.FC = () => {
   const { projectId } = route.params;
   const tier = useUserStore((s) => s.tier);
 
+  const demoSentences = useDemoStore((s) => s.sentences);
+  const demoTakes = useDemoStore((s) => s.takes);
+  const demoSelectTake = useDemoStore((s) => s.selectTake);
+  const demoSetDiscarded = useDemoStore((s) => s.setDiscarded);
+
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<SentenceReview[]>([]);
   const [stitching, setStitching] = useState(false);
@@ -68,53 +73,26 @@ const ReviewScreen: React.FC = () => {
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [previewVisible, setPreviewVisible] = useState(false);
 
-  // ─── Load sentences + takes ─────────────────────────────────────────────────
+  // ─── Load from demo store ────────────────────────────────────────────────────
   useEffect(() => {
-    (async () => {
-      try {
-        const { data: sentences, error: se } = await supabase
-          .from('sentences')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('order_index', { ascending: true });
-        if (se || !sentences) throw se ?? new Error('No sentences');
-
-        const sentenceIds = sentences.map((s: Sentence) => s.id);
-        const { data: takes, error: te } = await supabase
-          .from('takes')
-          .select('*')
-          .in('sentence_id', sentenceIds)
-          .eq('is_discarded', false)
-          .order('created_at', { ascending: true });
-        if (te) throw te;
-
-        const takesBySentence: Record<string, Take[]> = {};
-        for (const t of (takes as Take[]) ?? []) {
-          if (!takesBySentence[t.sentence_id]) takesBySentence[t.sentence_id] = [];
-          takesBySentence[t.sentence_id].push(t);
-        }
-
-        const reviewRows: SentenceReview[] = (sentences as Sentence[]).map((s) => {
-          const st = takesBySentence[s.id] ?? [];
-          const autoId = pickBestTake(st);
-          return {
-            sentence: s,
-            takes: st,
-            selectedTakeId: s.selected_take_id ?? autoId,
-            autoSelectedTakeId: autoId,
-          };
-        });
-
-        setRows(reviewRows);
-      } catch {
-        Alert.alert('Error', 'Could not load takes.', [
-          { text: 'Go back', onPress: () => navigation.goBack() },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [navigation, projectId]);
+    const takesBySentence: Record<string, Take[]> = {};
+    for (const t of demoTakes) {
+      if (!takesBySentence[t.sentence_id]) takesBySentence[t.sentence_id] = [];
+      takesBySentence[t.sentence_id].push(t as unknown as Take);
+    }
+    const reviewRows: SentenceReview[] = demoSentences.map((s) => {
+      const st = takesBySentence[s.id] ?? [];
+      const autoId = pickBestTake(st);
+      return {
+        sentence: s as any,
+        takes: st,
+        selectedTakeId: s.selected_take_id ?? autoId,
+        autoSelectedTakeId: autoId,
+      };
+    });
+    setRows(reviewRows);
+    setLoading(false);
+  }, [demoSentences, demoTakes]);
 
   // ─── Select a take ───────────────────────────────────────────────────────────
   const selectTake = useCallback((sentenceId: string, takeId: string) => {
@@ -126,9 +104,9 @@ const ReviewScreen: React.FC = () => {
   }, []);
 
   // ─── Discard / restore ──────────────────────────────────────────────────────
-  const toggleDiscard = useCallback(async (take: Take) => {
+  const toggleDiscard = useCallback((take: Take) => {
     const nowDiscarded = !take.is_discarded;
-    await supabase.from('takes').update({ is_discarded: nowDiscarded }).eq('id', take.id);
+    demoSetDiscarded(take.id, nowDiscarded);
     setRows((prev) =>
       prev.map((r) => {
         if (r.sentence.id !== take.sentence_id) return r;
@@ -177,24 +155,14 @@ const ReviewScreen: React.FC = () => {
   }, [rows]);
 
   // ─── Save + continue ─────────────────────────────────────────────────────────
-  const handleContinue = useCallback(async () => {
+  const handleContinue = useCallback(() => {
     setSaving(true);
-    try {
-      await Promise.all(
-        rows.map((r) =>
-          supabase
-            .from('sentences')
-            .update({ selected_take_id: r.selectedTakeId })
-            .eq('id', r.sentence.id),
-        ),
-      );
-      navigation.navigate('Export', { projectId });
-    } catch {
-      Alert.alert('Error', 'Could not save selections.');
-    } finally {
-      setSaving(false);
-    }
-  }, [navigation, projectId, rows]);
+    rows.forEach((r) => {
+      if (r.selectedTakeId) demoSelectTake(r.sentence.id, r.selectedTakeId);
+    });
+    navigation.navigate('Export', { projectId });
+    setSaving(false);
+  }, [demoSelectTake, navigation, projectId, rows]);
 
   const handleExit = useCallback(() => {
     Alert.alert('Exit review?', 'Selections will not be saved.', [

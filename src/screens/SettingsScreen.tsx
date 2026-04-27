@@ -10,7 +10,6 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
-import supabase from '@/lib/supabase';
 import { useUserStore } from '@/store/userStore';
 import { colors, spacing, typography } from '@/theme';
 
@@ -57,12 +56,7 @@ const SettingsScreen: React.FC = () => {
       {
         text: 'Sign out',
         style: 'destructive',
-        onPress: async () => {
-          try {
-            await supabase.auth.signOut();
-          } catch {
-            // Best effort
-          }
+        onPress: () => {
           clearUser();
           navigation.navigate('Auth');
         },

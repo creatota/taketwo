@@ -19,7 +19,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
 import { Sentence } from '@/types/database';
-import supabase from '@/lib/supabase';
+import { useDemoStore } from '@/store/demoStore';
 import { colors, spacing } from '@/theme';
 import { countFillerWords } from '@/config/fillerWords';
 import { detectPauses } from '@/utils/pauseDetection';
@@ -50,6 +50,8 @@ const RecordScreen: React.FC = () => {
   const { projectId, takesPerSentence } = route.params;
 
   const [permission, requestPermission] = useCameraPermissions();
+  const demoSentences = useDemoStore((s) => s.sentences);
+  const addDemoTake = useDemoStore((s) => s.addTake);
 
   const [phase, setPhase] = useState<RecordingPhase>('loading');
   const [sentences, setSentences] = useState<Sentence[]>([]);
@@ -64,24 +66,18 @@ const RecordScreen: React.FC = () => {
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
-  // ─── Fetch sentences on mount ───────────────────────────────────────────────
+  // ─── Load sentences from demo store ─────────────────────────────────────────
   useEffect(() => {
-    (async () => {
-      const { data, error } = await supabase
-        .from('sentences')
-        .select('*')
-        .eq('project_id', projectId)
-        .order('order_index', { ascending: true });
-      if (error || !data?.length) {
-        Alert.alert('Error', 'Could not load sentences.', [
-          { text: 'Go back', onPress: () => navigation.goBack() },
-        ]);
-        return;
-      }
-      setSentences(data);
-      setPhase('idle');
-    })();
-  }, [navigation, projectId]);
+    if (!demoSentences.length) {
+      Alert.alert('Error', 'No sentences found.', [
+        { text: 'Go back', onPress: () => navigation.goBack() },
+      ]);
+      return;
+    }
+    // Cast demo sentences to the Sentence type (shapes are identical)
+    setSentences(demoSentences as any);
+    setPhase('idle');
+  }, [navigation, demoSentences]);
 
   // ─── Recording duration timer ────────────────────────────────────────────────
   const startDurationTimer = useCallback(() => {
@@ -193,32 +189,8 @@ const RecordScreen: React.FC = () => {
 
       const compositeTier1 = fillerCount * -2 + pauseSegments.length * -1;
 
-      let dbTakeId = takeId;
-      try {
-        const { data } = await supabase
-          .from('takes')
-          .insert({
-            sentence_id: currentSentence.id,
-            local_file_path: permanentPath,
-            duration_ms: durationMs,
-            filler_count: fillerCount,
-            pause_count: pauseSegments.length,
-            pause_segments: pauseSegments,
-            eye_contact_score: null,
-            body_language_score: null,
-            tone_score: null,
-            composite_score: compositeTier1,
-            is_discarded: false,
-          })
-          .select('id')
-          .single();
-        if (data?.id) dbTakeId = data.id;
-      } catch {
-        // Non-fatal: local take still tracked
-      }
-
       const newTake: LocalTake = {
-        id: dbTakeId,
+        id: takeId,
         sentenceIndex,
         takeNumber: newTakeNumber,
         localPath: permanentPath,
@@ -227,17 +199,25 @@ const RecordScreen: React.FC = () => {
         pauseSegments,
       };
 
+      addDemoTake({
+        id: takeId,
+        sentence_id: currentSentence.id,
+        local_file_path: permanentPath,
+        duration_ms: durationMs,
+        filler_count: fillerCount,
+        pause_count: pauseSegments.length,
+        pause_segments: pauseSegments,
+        composite_score: compositeTier1,
+        is_discarded: false,
+        created_at: new Date().toISOString(),
+      });
+
       setAllTakes((prev) => [...prev, newTake]);
 
       const sentenceDone = newTakeNumber >= takesPerSentence;
       const lastSentence = sentenceIndex >= sentences.length - 1;
 
       if (sentenceDone && lastSentence) {
-        // All done — update project status and navigate
-        await supabase
-          .from('projects')
-          .update({ status: 'reviewing', updated_at: new Date().toISOString() })
-          .eq('id', projectId);
         setPhase('done');
         navigation.navigate('Review', { projectId });
       } else if (sentenceDone) {
@@ -273,14 +253,10 @@ const RecordScreen: React.FC = () => {
   }, [allTakes, sentenceIndex, takeCount]);
 
   // ─── Done early: advance with fewer takes ────────────────────────────────────
-  const handleDoneEarly = useCallback(async () => {
+  const handleDoneEarly = useCallback(() => {
     if (takeCount === 0) return;
     const lastSentence = sentenceIndex >= sentences.length - 1;
     if (lastSentence) {
-      await supabase
-        .from('projects')
-        .update({ status: 'reviewing', updated_at: new Date().toISOString() })
-        .eq('id', projectId);
       navigation.navigate('Review', { projectId });
     } else {
       setSentenceIndex((i) => i + 1);

@@ -24,8 +24,6 @@
     "expo-av": "~13.10.5",
     "expo-file-system": "~16.0.8",
     "expo-haptics": "~12.8.1",
-    "@react-native-voice/voice": "^3.2.4",
-    "ffmpeg-kit-react-native": "^6.0.2",
     "expo-media-library": "~15.9.1"
   },
   "devDependencies": {

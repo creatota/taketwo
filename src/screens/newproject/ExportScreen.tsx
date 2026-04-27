@@ -14,9 +14,8 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/navigation';
-import { Sentence, Take } from '@/types/database';
-import supabase from '@/lib/supabase';
 import { useUserStore } from '@/store/userStore';
+import { useDemoStore } from '@/store/demoStore';
 import { hasFeature } from '@/config/features';
 import { stitchTakes, AspectRatio } from '@/utils/videoStitch';
 import { colors, spacing, typography } from '@/theme';
@@ -40,8 +39,10 @@ const ExportScreen: React.FC = () => {
   const { projectId } = route.params;
   const tier = useUserStore((s) => s.tier);
 
-  const [loading, setLoading] = useState(true);
-  const [selectedTakes, setSelectedTakes] = useState<Take[]>([]);
+  const demoSentences = useDemoStore((s) => s.sentences);
+  const demoTakes = useDemoStore((s) => s.takes);
+
+  const [loading] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('9:16');
   const [captionsEnabled, setCaptionsEnabled] = useState(false);
   const [phase, setPhase] = useState<ExportPhase>('idle');
@@ -51,90 +52,34 @@ const ExportScreen: React.FC = () => {
   const canCaptions = hasFeature('auto_captions', tier);
   const canMusic = hasFeature('export_background_music', tier);
 
-  // ─── Load selected takes ─────────────────────────────────────────────────────
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: sentences } = await supabase
-          .from('sentences')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('order_index', { ascending: true });
+  // Resolve selected takes from demo store in sentence order
+  const selectedTakes = demoSentences
+    .map((s) => demoTakes.find((t) => t.id === s.selected_take_id && !t.is_discarded))
+    .filter(Boolean) as typeof demoTakes;
 
-        if (!sentences?.length) throw new Error('No sentences');
-
-        const takeIds = (sentences as Sentence[])
-          .map((s) => s.selected_take_id)
-          .filter(Boolean) as string[];
-
-        if (takeIds.length === 0) throw new Error('No takes selected');
-
-        const { data: takes } = await supabase
-          .from('takes')
-          .select('*')
-          .in('id', takeIds);
-
-        // Restore original sentence order
-        const takesById: Record<string, Take> = {};
-        for (const t of (takes as Take[]) ?? []) takesById[t.id] = t;
-
-        const ordered = (sentences as Sentence[])
-          .map((s) => (s.selected_take_id ? takesById[s.selected_take_id] : null))
-          .filter(Boolean) as Take[];
-
-        setSelectedTakes(ordered);
-      } catch (err) {
-        Alert.alert('Error', err instanceof Error ? err.message : 'Could not load takes.', [
-          { text: 'Go back', onPress: () => navigation.goBack() },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [navigation, projectId]);
-
-  // ─── Export ──────────────────────────────────────────────────────────────────
+  // ─── Export (demo: simulate stitching then mark done) ────────────────────────
   const handleExport = useCallback(async () => {
-    if (selectedTakes.length === 0) return;
     setPhase('exporting');
-
     try {
-      await FileSystem.makeDirectoryAsync(EXPORTS_DIR, { intermediates: true });
-      const outPath = `${EXPORTS_DIR}${projectId}_${Date.now()}.mp4`;
-
+      // Simulate FFmpeg processing (real implementation uses videoStitch.ts)
       await stitchTakes(
         selectedTakes.map((t) => ({
           localPath: t.local_file_path,
           durationMs: t.duration_ms,
           pauseSegments: t.pause_segments ?? [],
         })),
-        outPath,
+        `${EXPORTS_DIR}demo_export.mp4`,
         aspectRatio,
       );
-
-      // TODO Phase 8: burn captions via FFmpeg subtitles filter if captionsEnabled
-
-      // Record export in Supabase
-      const totalDuration = selectedTakes.reduce((sum, t) => sum + t.duration_ms, 0);
-      await supabase.from('exports').insert({
-        project_id: projectId,
-        output_path: outPath,
-        format: aspectRatio,
-        duration_ms: totalDuration,
-      });
-
-      await supabase
-        .from('projects')
-        .update({ status: 'exported', updated_at: new Date().toISOString() })
-        .eq('id', projectId);
-
-      setOutputPath(outPath);
+      // Use the first take's file as a stand-in output for camera roll saving
+      const firstPath = selectedTakes[0]?.local_file_path ?? null;
+      setOutputPath(firstPath);
       setPhase('done');
     } catch (err) {
       setPhase('idle');
       Alert.alert('Export failed', err instanceof Error ? err.message : 'Unknown error');
     }
-  }, [aspectRatio, projectId, selectedTakes]);
+  }, [aspectRatio, selectedTakes]);
 
   // ─── Save to camera roll ─────────────────────────────────────────────────────
   const handleSaveToCameraRoll = useCallback(async () => {
