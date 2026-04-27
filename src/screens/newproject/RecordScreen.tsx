@@ -22,6 +22,8 @@ import { Sentence } from '@/types/database';
 import supabase from '@/lib/supabase';
 import { colors, spacing } from '@/theme';
 import { countFillerWords } from '@/config/fillerWords';
+import { detectPauses } from '@/utils/pauseDetection';
+import { PauseSegment } from '@/types/database';
 
 type RecordNavProp = NativeStackNavigationProp<RootStackParamList, 'Record'>;
 type RecordRouteProp = RouteProp<RootStackParamList, 'Record'>;
@@ -35,6 +37,7 @@ interface LocalTake {
   localPath: string;
   durationMs: number;
   fillerCount: number;
+  pauseSegments: PauseSegment[];
 }
 
 const TAKES_DIR = `${FileSystem.documentDirectory}takes/`;
@@ -180,7 +183,15 @@ const RecordScreen: React.FC = () => {
       // TODO Phase 8: run cloud STT on the audio and count fillers in the transcript.
       const fillerCount = countFillerWords(currentSentence.text);
 
-      const compositeTier1 = fillerCount * -2;
+      // Pause detection via FFmpeg silencedetect — segments stored for removal at export time
+      let pauseSegments: PauseSegment[] = [];
+      try {
+        pauseSegments = await detectPauses(permanentPath);
+      } catch {
+        // Non-fatal — proceed with empty segments
+      }
+
+      const compositeTier1 = fillerCount * -2 + pauseSegments.length * -1;
 
       let dbTakeId = takeId;
       try {
@@ -191,7 +202,8 @@ const RecordScreen: React.FC = () => {
             local_file_path: permanentPath,
             duration_ms: durationMs,
             filler_count: fillerCount,
-            pause_count: 0, // TODO Phase 3: RMS silence analysis
+            pause_count: pauseSegments.length,
+            pause_segments: pauseSegments,
             eye_contact_score: null,
             body_language_score: null,
             tone_score: null,
@@ -212,6 +224,7 @@ const RecordScreen: React.FC = () => {
         localPath: permanentPath,
         durationMs,
         fillerCount,
+        pauseSegments,
       };
 
       setAllTakes((prev) => [...prev, newTake]);
@@ -386,6 +399,9 @@ const RecordScreen: React.FC = () => {
                 <Text style={styles.thumbnailDur}>{formatDuration(t.durationMs)}</Text>
                 {t.fillerCount > 0 && (
                   <Text style={styles.thumbnailFiller}>{t.fillerCount} filler{t.fillerCount !== 1 ? 's' : ''}</Text>
+                )}
+                {t.pauseSegments.length > 0 && (
+                  <Text style={styles.thumbnailPause}>{t.pauseSegments.length} pause{t.pauseSegments.length !== 1 ? 's' : ''}</Text>
                 )}
               </View>
             ))}
@@ -624,6 +640,12 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: colors.warning,
     marginTop: 2,
+    textAlign: 'center',
+  },
+  thumbnailPause: {
+    fontSize: 9,
+    color: colors.accent,
+    marginTop: 1,
     textAlign: 'center',
   },
 

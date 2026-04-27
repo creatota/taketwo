@@ -18,6 +18,12 @@ export interface Sentence {
   selected_take_id: string | null;
 }
 
+// A detected silence segment within a take — used by FFmpeg at stitch time to cut pauses out
+export interface PauseSegment {
+  start_ms: number;
+  end_ms: number;
+}
+
 export interface Take {
   id: string;
   sentence_id: string;
@@ -25,6 +31,7 @@ export interface Take {
   duration_ms: number;
   filler_count: number;
   pause_count: number;
+  pause_segments: PauseSegment[]; // stored as JSONB; FFmpeg uses these to cut pauses during export
   eye_contact_score: number | null;
   body_language_score: number | null;
   tone_score: number | null;
