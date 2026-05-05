@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#F5F2EC" />
+<title>Creatota — Show me where your business is leaking money.</title>
+<meta name="description" content="AI automation and website rebuilds for operators who can feel something's off but can't name it. 5–10% revenue lift in the first 30 days, or you don't pay." />
+<meta property="og:title" content="Creatota — Plug the leaks in 3 to 5 days." />
+<meta property="og:description" content="I find the spots where money is silently leaking. Then I fix them. Free audit, project-priced fix." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" role="banner">
+  <a class="wordmark" href="#top" aria-label="Creatota — home">
+    <span class="wm-mark" aria-hidden="true">◍</span>
+    <span class="wm-text">Creatota</span>
+  </a>
+  <nav class="nav-right" aria-label="Primary">
+    <a class="nav-cta" href="#audit">Book Audit <span aria-hidden="true">→</span></a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="hero-grid">
+
+      <div class="hero-meta">
+        <span class="rule" aria-hidden="true"></span>
+        <span class="meta-label">File №01 — The Diagnostic</span>
+        <span class="meta-label meta-right">Est. read · 3 min</span>
+      </div>
+
+      <h1 class="hero-h" id="hero-h">
+        <span class="line">Your business</span>
+        <span class="line">is <em class="accent-text">leaking</em> money.</span>
+        <span class="line dim">I find where.</span>
+        <span class="line dim">I plug it in 3–5 days.</span>
+      </h1>
+
+      <aside class="ticker" aria-live="polite" aria-atomic="false">
+        <div class="ticker-amount">
+          <span class="ticker-currency">$</span><span class="ticker-num" id="ticker-num">0.00</span>
+        </div>
+        <div class="ticker-caption">lost while you read this page</div>
+        <div class="ticker-foot">avg leak rate · mid-market site · ~$3.40/sec</div>
+        <div class="ticker-spark" aria-hidden="true">
+          <svg viewBox="0 0 120 32" preserveAspectRatio="none">
+            <polyline class="spark-line" points="0,22 12,18 24,24 36,14 48,17 60,9 72,15 84,7 96,12 108,4 120,8" />
+          </svg>
+        </div>
+      </aside>
+
+      <p class="hero-sub">
+        AI automation and website rebuilds for operators who can <em>feel</em> something's off but can't name it.
+        5–10% revenue lift in the first 30 days, or you don't pay.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#audit">Show me my leaks <span aria-hidden="true">→</span></a>
+        <a class="link-quiet" href="#process">How the audit works</a>
+      </div>
+
+      <div class="hero-foot">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="mono small">One operator. No PMs. No agency.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LEAK MAP ================= -->
+  <section class="leakmap" id="leakmap" aria-labelledby="lm-h">
+    <header class="section-head">
+      <span class="section-num mono">02</span>
+      <h2 class="section-h" id="lm-h">Where the money goes.</h2>
+      <p class="section-sub">A typical funnel. Six things quietly costing you customers. <span class="hover-hint">Hover the dots.</span><span class="mobile-hint">Tap the dots.</span></p>
+    </header>
+
+    <div class="leakmap-frame" data-leakmap>
+      <div class="frame-rule">
+        <span class="mono small">SCAN · 2025–11</span>
+        <span class="mono small">FUNNEL · 4 STAGES</span>
+        <span class="mono small">FLAGS · <span class="accent-text">06</span></span>
+      </div>
+
+      <div class="wires">
+
+        <!-- Stage 1: Homepage -->
+        <figure class="wire" data-stage="01">
+          <figcaption class="wire-cap"><span class="mono small">01</span> Homepage</figcaption>
+          <div class="wire-body wire-home">
+            <div class="w-bar"></div>
+            <div class="w-hero">
+              <div class="w-headline"></div>
+              <div class="w-headline short"></div>
+              <div class="w-btn"></div>
+            </div>
+            <div class="w-tiles">
+              <div class="w-tile"></div>
+              <div class="w-tile"></div>
+              <div class="w-tile"></div>
+            </div>
+            <div class="w-foot"></div>
+            <button class="hot" type="button" style="top:18%;left:62%" data-hot
+              data-title="Bounce on first scroll"
+              data-body="42% of mobile users bounce here. Page weight is 4.8MB. LCP is 4.2s. They never see the offer."
+              data-tag="UX · PERF" aria-label="Leak: bounce on first scroll"></button>
+            <button class="hot" type="button" style="top:64%;left:24%" data-hot
+              data-title="Headline says nothing"
+              data-body="The first 4 words don't tell me what you do, who it's for, or why I should care. Six seconds, gone."
+              data-tag="COPY" aria-label="Leak: headline says nothing"></button>
+          </div>
+        </figure>
+
+        <!-- Stage 2: Product -->
+        <figure class="wire" data-stage="02">
+          <figcaption class="wire-cap"><span class="mono small">02</span> Product</figcaption>
+          <div class="wire-body wire-product">
+            <div class="w-bar"></div>
+            <div class="w-split">
+              <div class="w-img"></div>
+              <div class="w-copy">
+                <div class="w-line"></div>
+                <div class="w-line"></div>
+                <div class="w-line short"></div>
+                <div class="w-btn"></div>
+              </div>
+            </div>
+            <div class="w-reviews">
+              <div class="w-line short"></div>
+              <div class="w-line"></div>
+            </div>
+            <button class="hot" type="button" style="top:42%;left:78%" data-hot
+              data-title="No social proof above the fold"
+              data-body="Reviews load 1,400px down. 71% of buyers never scroll that far. Trust is decided before the scroll."
+              data-tag="UX · TRUST" aria-label="Leak: reviews below fold"></button>
+          </div>
+        </figure>
+
+        <!-- Stage 3: Cart -->
+        <figure class="wire" data-stage="03">
+          <figcaption class="wire-cap"><span class="mono small">03</span> Cart</figcaption>
+          <div class="wire-body wire-cart">
+            <div class="w-bar"></div>
+            <div class="w-row"><span class="w-thumb"></span><span class="w-line"></span><span class="w-num"></span></div>
+            <div class="w-row"><span class="w-thumb"></span><span class="w-line"></span><span class="w-num"></span></div>
+            <div class="w-totals">
+              <div class="w-line short"></div>
+              <div class="w-line short"></div>
+              <div class="w-btn full"></div>
+            </div>
+            <button class="hot" type="button" style="top:72%;left:70%" data-hot
+              data-title="Cart abandons spike at $74"
+              data-body="Shipping appears late. No exit-intent flow. No abandoned-cart sequence. This one stage leaks 18% of revenue."
+              data-tag="OPS · AI" aria-label="Leak: cart abandonment"></button>
+          </div>
+        </figure>
+
+        <!-- Stage 4: Checkout -->
+        <figure class="wire" data-stage="04">
+          <figcaption class="wire-cap"><span class="mono small">04</span> Checkout / Support</figcaption>
+          <div class="wire-body wire-checkout">
+            <div class="w-bar"></div>
+            <div class="w-form">
+              <div class="w-field"></div>
+              <div class="w-field"></div>
+              <div class="w-field half"></div><div class="w-field half"></div>
+              <div class="w-field"></div>
+              <div class="w-field"></div>
+              <div class="w-field"></div>
+              <div class="w-btn full"></div>
+            </div>
+            <button class="hot" type="button" style="top:34%;left:30%" data-hot
+              data-title="Form has 7 fields"
+              data-body="Four are optional. None are marked. Each unmarked optional field costs you ~2.3% conversion."
+              data-tag="UX · COPY" aria-label="Leak: 7 form fields"></button>
+            <button class="hot" type="button" style="top:84%;left:62%" data-hot
+              data-title="Support email replies in 14 hours"
+              data-body="An auto-replier with one canned line. Should be a 14-second AI agent that resolves 60% of tickets and routes the rest."
+              data-tag="AI · OPS" aria-label="Leak: slow support email"></button>
+          </div>
+        </figure>
+
+      </div>
+
+      <!-- Annotation panel (desktop hover) / Drawer (mobile tap) -->
+      <aside class="annotation" id="annotation" aria-live="polite">
+        <div class="ann-empty">
+          <span class="mono small dim">// hover a dot</span>
+          <p>Each red mark is a place this funnel quietly loses money. Move your cursor over one to see the diagnosis.</p>
+        </div>
+        <div class="ann-content" hidden>
+          <div class="ann-tag mono small"></div>
+          <div class="ann-title"></div>
+          <div class="ann-body"></div>
+          <div class="ann-foot mono small">// estimated impact varies. all numbers from real audits.</div>
+        </div>
+      </aside>
+
+      <div class="frame-rule bottom">
+        <span class="mono small">END SCAN</span>
+        <span class="mono small">CONFIDENTIAL · CREATOTA</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section class="process" id="process" aria-labelledby="pr-h">
+    <header class="section-head">
+      <span class="section-num mono">03</span>
+      <h2 class="section-h" id="pr-h">Three to five days. <span class="dim">Plainly.</span></h2>
+    </header>
+
+    <ol class="steps">
+      <li class="step">
+        <div class="step-day mono">DAY 0</div>
+        <h3 class="step-h">Audit.</h3>
+        <p>I screen-record your site, your funnel, your handoffs. I send you a one-page leak report. <strong>Free.</strong></p>
+        <div class="step-foot mono small">~45 min · async · no deck</div>
+      </li>
+      <li class="step">
+        <div class="step-day mono">DAYS 1–3</div>
+        <h3 class="step-h">Build.</h3>
+        <p>I rebuild the leaking pieces. UX, copy, AI workflows, automations. You review at end of Day 2.</p>
+        <div class="step-foot mono small">staging · daily looms · 1 reviewer (you)</div>
+      </li>
+      <li class="step">
+        <div class="step-day mono">DAYS 4–5</div>
+        <h3 class="step-h">Ship.</h3>
+        <p>Live by Friday. Tracking instrumented. We measure for 30 days.</p>
+        <div class="step-foot mono small">prod · analytics wired · 30-day window opens</div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ================= WHAT GETS FIXED ================= -->
+  <section class="fixes" aria-labelledby="fx-h">
+    <header class="section-head">
+      <span class="section-num mono">04</span>
+      <h2 class="section-h" id="fx-h">What gets fixed.</h2>
+      <p class="section-sub">Specific is the proof. Generic is the agency.</p>
+    </header>
+
+    <ul class="fix-list">
+      <li class="fix"><span class="tag tag-ux">UX</span><span class="fix-text">Checkout that converts on mobile. Not just &ldquo;responsive.&rdquo;</span></li>
+      <li class="fix"><span class="tag tag-ai">AI</span><span class="fix-text">A support agent that answers in 14 seconds. Not 14 hours.</span></li>
+      <li class="fix"><span class="tag tag-ops">OPS</span><span class="fix-text">Lead handoff that doesn't die in someone's inbox.</span></li>
+      <li class="fix"><span class="tag tag-ai">AI</span><span class="fix-text">A booking flow that reschedules itself when people ghost.</span></li>
+      <li class="fix"><span class="tag tag-ux">UX</span><span class="fix-text">A homepage that says what you do in the first four words.</span></li>
+      <li class="fix"><span class="tag tag-ops">OPS</span><span class="fix-text">A reporting dashboard you'll actually open on Monday.</span></li>
+      <li class="fix"><span class="tag tag-ai">AI</span><span class="fix-text">An onboarding email sequence written from your last 50 tickets.</span></li>
+      <li class="fix"><span class="tag tag-ux">UX</span><span class="fix-text">A pricing page that stops asking people to &ldquo;contact sales.&rdquo;</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= NUMBERS ================= -->
+  <section class="numbers" aria-labelledby="nm-h">
+    <header class="section-head">
+      <span class="section-num mono">05</span>
+      <h2 class="section-h" id="nm-h">The numbers.</h2>
+    </header>
+
+    <dl class="big-stats">
+      <div class="stat">
+        <dt class="stat-label mono">Avg. revenue lift, first 30 days</dt>
+        <dd class="stat-num"><span data-count-to="5">0</span>–<span data-count-to="10">0</span><span class="stat-unit">%</span></dd>
+      </div>
+      <div class="stat">
+        <dt class="stat-label mono">Audit to shipped fix</dt>
+        <dd class="stat-num"><span data-count-to="3">0</span>–<span data-count-to="5">0</span><span class="stat-unit">days</span></dd>
+      </div>
+      <div class="stat">
+        <dt class="stat-label mono">Operators on your account</dt>
+        <dd class="stat-num"><span data-count-to="1">0</span><span class="stat-unit">— me.</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ================= WHY NOT AN AGENCY ================= -->
+  <section class="agency" aria-labelledby="ag-h">
+    <header class="section-head">
+      <span class="section-num mono">06</span>
+      <h2 class="section-h" id="ag-h">Agencies sell you process. <span class="dim">I sell you the fix.</span></h2>
+    </header>
+
+    <div class="agency-lines">
+      <p class="ag-line">Agencies need <strong>six weeks</strong> because they have <strong>six layers</strong>.</p>
+      <p class="ag-line">I have one layer. <em>Me.</em></p>
+      <p class="ag-line">I move at the speed your business is bleeding.</p>
+    </div>
+
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-head mono small">THE AGENCY</div>
+        <ul>
+          <li>Discovery call</li>
+          <li>SOW</li>
+          <li>Kickoff</li>
+          <li>Strategy phase</li>
+          <li>Design phase</li>
+          <li>Dev phase</li>
+          <li>QA</li>
+          <li>Launch</li>
+          <li class="compare-total mono">~6 weeks</li>
+        </ul>
+      </div>
+      <div class="compare-col compare-mine">
+        <div class="compare-head mono small accent-text">CREATOTA</div>
+        <ul>
+          <li>Audit</li>
+          <li>Build</li>
+          <li>Ship</li>
+          <li class="compare-total mono">3–5 days</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROOF ================= -->
+  <section class="proof" aria-labelledby="pf-h">
+    <header class="section-head">
+      <span class="section-num mono">07</span>
+      <h2 class="section-h" id="pf-h">The leak report. <span class="dim">A sample.</span></h2>
+      <p class="section-sub">No fake testimonials here. When real ones come in, they go here. Until then — this is what shows up in your inbox on Day 0.</p>
+    </header>
+
+    <div class="report-stage">
+      <article class="report-card" aria-label="Sample leak report">
+        <div class="report-tape" aria-hidden="true"></div>
+        <header class="report-head">
+          <div class="mono small">CREATOTA · LEAK REPORT</div>
+          <div class="mono small dim">CLIENT · ACME [redacted]</div>
+          <div class="mono small dim">DATE · 2025-11-04</div>
+        </header>
+
+        <h3 class="report-title">Six leaks. One page. No fluff.</h3>
+
+        <ol class="report-list">
+          <li><span class="mono small dim">L01</span> Mobile bounce 42% on /home. Page weight 4.8MB. Fix: 1.1MB target. <span class="mono small accent-text">~$2.4k/mo</span></li>
+          <li><span class="mono small dim">L02</span> Cart abandon at $74 (shipping reveal). Add exit-intent + abandon flow. <span class="mono small accent-text">~$5.1k/mo</span></li>
+          <li><span class="mono small dim">L03</span> Support email replies in 14h. Ship AI triage agent. <span class="mono small accent-text">~$1.8k/mo</span></li>
+          <li><span class="mono small dim">L04</span> Lead form 7 fields, 4 optional unmarked. Cut to 3. <span class="mono small accent-text">~$0.9k/mo</span></li>
+          <li><span class="mono small dim">L05</span> No-shows on calls = 22%. Add self-reschedule flow. <span class="mono small accent-text">~$1.3k/mo</span></li>
+          <li><span class="mono small dim">L06</span> Reporting in 4 tools. Consolidate to 1 dashboard. <span class="mono small accent-text">time</span></li>
+        </ol>
+
+        <footer class="report-foot">
+          <div>
+            <div class="mono small dim">EST. RECOVERED / 30D</div>
+            <div class="report-recovered">$11,500</div>
+          </div>
+          <div class="report-stamp" aria-hidden="true">DAY 0</div>
+        </footer>
+      </article>
+      <p class="report-cap">This is what you get on Day 0. <strong>Free.</strong></p>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="faq" aria-labelledby="fq-h">
+    <header class="section-head">
+      <span class="section-num mono">08</span>
+      <h2 class="section-h" id="fq-h">Real questions, short answers.</h2>
+    </header>
+
+    <dl class="qa">
+      <div class="qa-row">
+        <dt>What if I don't have an AI use case?</dt>
+        <dd>You don't need one. I'll find it.</dd>
+      </div>
+      <div class="qa-row">
+        <dt>What does it cost?</dt>
+        <dd>The audit is free. The fix is project-priced after. If the lift doesn't hit 5%, you don't pay the back-half.</dd>
+      </div>
+      <div class="qa-row">
+        <dt>What stack do you work in?</dt>
+        <dd>Whatever you're on. I don't sell platforms.</dd>
+      </div>
+      <div class="qa-row">
+        <dt>How do I know you can actually do this?</dt>
+        <dd>Book the audit. The report is the proof.</dd>
+      </div>
+      <div class="qa-row">
+        <dt>Do you sign NDAs?</dt>
+        <dd>Yes. Send yours, or I'll send mine.</dd>
+      </div>
+      <div class="qa-row">
+        <dt>What if my site is on Squarespace / Webflow / Shopify / custom?</dt>
+        <dd>All four are fine. Most leaks aren't a platform problem.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ================= AUDIT FORM ================= -->
+  <section class="audit" id="audit" aria-labelledby="au-h">
+    <header class="section-head">
+      <span class="section-num mono">09</span>
+      <h2 class="section-h" id="au-h">Three fields. <span class="dim">That's the form.</span></h2>
+      <p class="section-sub">Tell me what feels off. I'll record the audit and send the leak report inside 48 hours.</p>
+    </header>
+
+    <form class="audit-form" novalidate>
+      <label class="field">
+        <span class="field-label mono small">01 · YOUR NAME</span>
+        <input type="text" name="name" autocomplete="name" required placeholder="First and last is fine." />
+      </label>
+
+      <label class="field">
+        <span class="field-label mono small">02 · SITE URL</span>
+        <input type="url" name="url" inputmode="url" autocomplete="url" required placeholder="https://" />
+      </label>
+
+      <label class="field">
+        <span class="field-label mono small">03 · WHAT FEELS OFF?</span>
+        <textarea name="feels" rows="4" placeholder="One sentence is enough. Two is better."></textarea>
+      </label>
+
+      <div class="field-actions">
+        <button class="btn btn-primary" type="submit">Send the audit request <span aria-hidden="true">→</span></button>
+        <span class="mono small dim">or pick a 45-min slot →
+          <a class="link-quiet" href="#" data-calendar>Open calendar</a>
+        </span>
+      </div>
+
+      <div class="audit-note mono small dim">
+        // I read every one. Reply within one business day. No drip sequence. No upsell email.
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="final" aria-labelledby="cta-h">
+    <div class="final-inner">
+      <h2 class="final-h" id="cta-h">Stop guessing where it's leaking.</h2>
+      <a class="btn btn-final" href="#audit">Book the free audit <span aria-hidden="true">→</span></a>
+      <p class="final-foot">45 minutes. No deck. No pitch. Just the leak report.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="foot" role="contentinfo">
+  <div class="foot-row">
+    <span class="foot-mark">◍ Creatota</span>
+    <a href="mailto:hello@creatota.co">hello@creatota.co</a>
+    <a href="#audit">Calendar</a>
+    <a href="#" rel="me">LinkedIn</a>
+  </div>
+  <div class="foot-row mono small dim">
+    Built in 4 days. Hosted on bare metal. No tracking pixels except the one that tells me you read this far.
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
